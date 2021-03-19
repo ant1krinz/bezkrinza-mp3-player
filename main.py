@@ -143,9 +143,10 @@ class Player(QMainWindow):
             else:
                 artist_name = "Неизвестен"
             # создаю jpg с обложкой
-            with open("{} - {}.jpg".format(artist_name, title), "wb") as image_file:
+
+            with open("src/music/img/{} - {}.jpg".format(artist_name, title), mode="wb") as image_file:
                 if list(audio_file.tag.images) != []:
-                    image_name = "{} - {}.jpg".format(artist_name, title)
+                    image_name = "src/music/img/{} - {}.jpg".format(artist_name, title)
                     image_file.write(audio_file.tag.images[0].image_data)
                 else:
                     image_name = "src/img/none_photo.png"
