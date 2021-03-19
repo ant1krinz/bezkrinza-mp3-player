@@ -1,13 +1,14 @@
 import sys
-from PyQt5 import uic, QtCore
+
+from PyQt5 import uic
 from PyQt5.QtGui import QPixmap, QFont, QIcon
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, \
     QMessageBox, QStyle, QFormLayout, QGroupBox, QLabel, \
-    QPushButton, QWidget, QInputDialog, QGridLayout, QHBoxLayout, QVBoxLayout
-from PyQt5.QtCore import Qt, QTimer
+    QPushButton, QInputDialog, QGridLayout
+from PyQt5.QtCore import QTimer
 import sqlite3
 from mutagen.mp3 import MP3
-from pygame import mixer, event
+from pygame import mixer
 import eyed3
 from random import choice
 
