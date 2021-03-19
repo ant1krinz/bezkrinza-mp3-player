@@ -17,7 +17,7 @@ mixer.init()
 class Player(QMainWindow):
     def __init__(self):
         super(Player, self).__init__()
-        uic.loadUi("player_interface.ui", self)
+        uic.loadUi("src/ui/player_interface.ui", self)
         self.add_music_button.clicked.connect(self.add_music)
 
         self.setWindowTitle("BEZKRINZA MP3-PLAYER")
@@ -29,7 +29,7 @@ class Player(QMainWindow):
         self.play_button.clicked.connect(self.play_pause_track)
         self.play_button.setEnabled(False)
 
-        self.setWindowIcon(QIcon("logo player.png"))
+        self.setWindowIcon(QIcon("src/img/logo player.png"))
 
         self.setFixedSize(1050, 600)
 
@@ -148,9 +148,9 @@ class Player(QMainWindow):
                     image_name = "{} - {}.jpg".format(artist_name, title)
                     image_file.write(audio_file.tag.images[0].image_data)
                 else:
-                    image_name = "none_photo.png"
+                    image_name = "src/img/none_photo.png"
             # заношу все в БД
-            con = sqlite3.connect("database_player.db")
+            con = sqlite3.connect("src/database/database_player.db")
             cur = con.cursor()
             result = cur.execute("""INSERT INTO tracks(artist,title,length,path_to_track, path_to_image, playlist) 
                                    VALUES (?,?,?,?,?,?)""",
@@ -170,7 +170,7 @@ class Player(QMainWindow):
         self.list_label = []
         self.list_button = []
         self.list_del_button = []
-        con = sqlite3.connect("database_player.db")
+        con = sqlite3.connect("src/database/database_player.db")
         cur = con.cursor()
         result = cur.execute("""SELECT id, artist, title FROM tracks 
                             WHERE playlist = ?""", (self.new_playlist_id,)).fetchall()
@@ -199,7 +199,7 @@ class Player(QMainWindow):
             self.list_del_button[i].clicked.connect(self.delete_music)
 
             # настраиваю внешний вид
-            self.list_del_button[i].setIcon(QIcon("bin.png"))
+            self.list_del_button[i].setIcon(QIcon("src/img/bin.png"))
             self.list_button[i].setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
 
             # заношу виджеты как ключ в словарь и присваиваю им всем id
@@ -224,7 +224,7 @@ class Player(QMainWindow):
 
     # удаление музыки
     def delete_music(self):
-        con = sqlite3.connect("database_player.db")
+        con = sqlite3.connect("src/database/database_player.db")
         cur = con.cursor()
         # определяю, кто отправил сигнал и достаю из словаря соответствующий id
         btn = str(self.sender())
@@ -237,7 +237,7 @@ class Player(QMainWindow):
 
     # начало проигрывания музыки
     def start_music(self, new_id=-1):
-        con = sqlite3.connect("database_player.db")
+        con = sqlite3.connect("src/database/database_player.db")
         cur = con.cursor()
         # проверка, был ли послан сигнал по нажатию кнопки next_track, кнопки play в scrollarea или автоматически
         # при заверешении предыдущего трека
@@ -294,7 +294,7 @@ class Player(QMainWindow):
     def show_info(self):
         app_info = QMessageBox()
         app_info.setWindowTitle("Info")
-        app_info.setWindowIcon(QIcon("info.png"))
+        app_info.setWindowIcon(QIcon("src/img/info.png"))
         app_info.setText("В данный момент вы используете MP3-плейер bezkrinza. "
                          "В этом плейере вы можете в один клик добавить новый плейлист(кнопка ADD PLAYLIST),"
                          "добавить в него свои любимые треки(кнопка ADD MUSIC). Если же они вам наскучат, "
@@ -323,7 +323,7 @@ class Player(QMainWindow):
         # проверка нажатия кнопки ОК
         if ok_pressed:
             # обновляю данные в БД
-            con = sqlite3.connect("database_player.db")
+            con = sqlite3.connect("src/database/database_player.db")
             cur = con.cursor()
             result = cur.execute("""INSERT INTO playlists(playlist_name) VALUES(?)""", (playlist_name,))
             con.commit()
@@ -332,7 +332,7 @@ class Player(QMainWindow):
 
     # изменение списка отображаемых плейлистов в combobox
     def update_combobox(self):
-        con = sqlite3.connect("database_player.db")
+        con = sqlite3.connect("src/database/database_player.db")
         cur = con.cursor()
         result = cur.execute("""SELECT playlist_name FROM playlists""").fetchall()
         for elem in result:
@@ -344,7 +344,7 @@ class Player(QMainWindow):
     # изменение данных о выбранном плейлисте
     def change_playlist(self):
         new_playlist_name = self.playlists.currentText()
-        con = sqlite3.connect("database_player.db")
+        con = sqlite3.connect("src/database/database_player.db")
         cur = con.cursor()
         self.new_playlist_id = cur.execute("""SELECT id FROM playlists 
                                            WHERE playlist_name = ?""", (new_playlist_name,)).fetchall()[0][0]
@@ -356,7 +356,7 @@ class Player(QMainWindow):
     # если трек всего один, он начнет проигрываться заново
     def next_track(self):
         try:
-            con = sqlite3.connect("database_player.db")
+            con = sqlite3.connect("src/database/database_player.db")
             cur = con.cursor()
             # получаю данные об айди играющего сейчас плейлиста
             current_playlist_id = cur.execute("""SELECT playlist FROM tracks 
@@ -384,7 +384,7 @@ class Player(QMainWindow):
     # аналогично с next_track поигрывет предыдущий трек
     def previous_track(self):
         try:
-            con = sqlite3.connect("database_player.db")
+            con = sqlite3.connect("src/database/database_player.db")
             cur = con.cursor()
             current_playlist_id = cur.execute("""SELECT playlist FROM tracks 
                                      WHERE id = ?""", (self.playing_id,)).fetchall()[0][0]
@@ -467,7 +467,7 @@ class Player(QMainWindow):
     # выбор рандомного айди трека из играющего плейлиста и его запуск
     def choose_random_music(self):
         try:
-            con = sqlite3.connect("database_player.db")
+            con = sqlite3.connect("src/database/database_player.db")
             cur = con.cursor()
             # получаю данные об айди играющего сейчас плейлиста
             current_playlist_id = cur.execute("""SELECT playlist FROM tracks 
